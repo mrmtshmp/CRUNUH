@@ -5,7 +5,7 @@
 \title{Make tidy data}
 \usage{
 make_date_data(dir.data, fn.data, fn.record, dir.output, fn.output,
-  .guess_max = 200)
+  n_of_feedback = 12, .guess_max = 200)
 }
 \arguments{
 \item{dir.data}{Character}
@@ -17,6 +17,10 @@ make_date_data(dir.data, fn.data, fn.record, dir.output, fn.output,
 \item{dir.output}{Character}
 
 \item{fn.output}{Character}
+
+\item{n_of_feedback}{Numeric}
+
+\item{.guess_max}{Numeric}
 }
 \description{
 Make tidy data

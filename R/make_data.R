@@ -11,6 +11,8 @@
 #' @param fn.record Charater
 #' @param dir.output Character
 #' @param fn.output Character
+#' @param n_of_feedback Numeric
+#' @param .guess_max Numeric
 #'
 #'
 #'
@@ -19,6 +21,7 @@
 make_date_data <- function(
   dir.data, fn.data, fn.record,
   dir.output, fn.output,
+  n_of_feedback = 12,
   .guess_max=200
   ){
 
@@ -63,7 +66,7 @@ make_date_data <- function(
   vec.make(c("Rec_Unit", "Due_Date", "Sent_back"), 2)
   vec.colnames <- c(
     "ID", "Title", "main", "Rec_Somu",
-    vec.make(c("Rec_Unit",	"Due_Date",	"Sent_back"), 11)
+    vec.make(c("Rec_Unit",	"Due_Date",	"Sent_back"), n_of_feedback)
     )
   colnames(data_raw) <- vec.colnames
   data <- data_raw %>%

@@ -21,20 +21,21 @@
 make_date_data.v2 <- function(
   dir.data, fn.data, fn.record,
   dir.output, fn.output,
-  n_of_feedback = 12,
+  n_of_feedback = 13,
   .guess_max=200
   ){
 
-# dir.data   <- "C:/Users/morim/Desktop"
-# fn.data    <- "data_200804.xlsx"
-# fn.record  <- "Report_200730.xlsx"
-#
+# dir.data   <- "./testdata"
+# fn.data    <- "data_210913.xlsx"
+# fn.record  <- "Report_210910.xlsx"
+# dir.output <- "./testdata"
+# fn.output  <- "output_210910.csv"
 # test<- CRUNUH::make_date_data(
 #   dir.data,
 #   fn.data,
 #   fn.record=fn.record,
 #   dir.data,
-#   fn.output = "output_200804.csv"
+#   fn.output = fn.output
 #   )
 
   data_raw <- read_excel(
@@ -50,7 +51,10 @@ make_date_data.v2 <- function(
     path = sprintf("%s/%s",dir.data,fn.record),
     sheet= 1,
     skip = 0,
-    col_names = TRUE,guess_max = .guess_max
+    na = ".",
+    col_types = c("numeric","text","text","text","date","numeric","date","date","date","date","date","date","text","date","text","text","text"),
+    col_names = TRUE,
+    guess_max = .guess_max
     ) %>%
     dplyr::select(
       ID, Title, var.3,
@@ -90,14 +94,14 @@ make_date_data.v2 <- function(
       !is.na(val) # & !is.na(Rec_Somu)
     ) %>%
     mutate(
-      ID    = gsub("([0-9]{1,})-([0-9]{1,}).+", "\\1_\\2", ID),
+      ID    = gsub(".?([0-9]{1,})-([0-9]{1,}).?", "\\1_\\2", ID),
       var.2 = gsub(".[0-9]{1,}","", var),
       var.3 = gsub("[^0-9]{1,}","", var)
-    ) %>%
+      ) %>%
     mutate(
       date = gsub("[^0-9]{1,}","", val),
       flg = gsub("[0-9]{1,}","", val)
-    ) %>%
+      ) %>%
     dplyr::select(-var, -val) %>%
     ddply(
       .(var.3),
@@ -134,27 +138,33 @@ make_date_data.v2 <- function(
     # filter(flg=="") %>%
     dplyr::select(-flg) %>%
     left_join(df.commented) %>%
-    full_join(
+    left_join(
       data_record %>%
         dplyr::select(
           ID, Title, var.3, starts_with("Comment_")
           )%>%
         mutate(
-          ID  = gsub("([0-9]{1,})-([0-9]{1,})", "\\1_\\2", ID),
-          var.3= as.character(var.3)
+          ID  = gsub(
+            ".?([0-9]{1,})-([0-9]{1,}).?",
+            "\\1_\\2",
+            ID
+            ),
+          var.3= as.character(var.3),
+          Comment_1=as.Date(Comment_1)
           ),
       by=c("ID", "Title", "var.3")
-    )
+    ) %>%
+    arrange(Due_date.2)
 
-  write.csv(
+  readr::write_excel_csv(
     output,
     file = sprintf(
       "%s/%s",
       dir.output,
       fn.output
-    ),
-    fileEncoding = "CP932",
-    na = "."
+    )#,
+    # fileEncoding = "CP932",
+    # na = "."
   )
   write.csv(
     df.commented,

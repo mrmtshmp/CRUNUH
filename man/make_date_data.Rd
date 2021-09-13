@@ -10,7 +10,7 @@ make_date_data(
   fn.record,
   dir.output,
   fn.output,
-  n_of_feedback = 12,
+  n_of_feedback = 13,
   .guess_max = 200
 )
 }

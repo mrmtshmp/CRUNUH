@@ -62,9 +62,10 @@ make_date_data.v2 <- function(
       )
 
   data_record <- data_record[
-    !duplicated(
-      data_record[,c("ID","Title","var.3", "Comment_1", "Comment_2")]
-      ),
+    # !duplicated(
+    #   data_record[,c("ID","Title","var.3", "Comment_1", "Comment_2")]
+    #   ) ,
+    !is.na(data_record$Comment_1),
     ]
 
   print(data_record%>%filter(ID=="8_28"))
@@ -94,7 +95,7 @@ make_date_data.v2 <- function(
       !is.na(val) # & !is.na(Rec_Somu)
     ) %>%
     mutate(
-      ID    = gsub(".?([0-9]{1,})-([0-9]{1,}).?", "\\1_\\2", ID),
+      ID    = gsub(".*([0-9]{1,})-([0-9]{1,}).*", "\\1_\\2", ID),
       var.2 = gsub(".[0-9]{1,}","", var),
       var.3 = gsub("[^0-9]{1,}","", var)
       ) %>%
@@ -103,6 +104,7 @@ make_date_data.v2 <- function(
       flg = gsub("[0-9]{1,}","", val)
       ) %>%
     dplyr::select(-var, -val) %>%
+    dplyr::distinct(ID, Title, var.2, var.3,.keep_all = TRUE) %>%
     ddply(
       .(var.3),
       function(D){
@@ -145,7 +147,7 @@ make_date_data.v2 <- function(
           )%>%
         mutate(
           ID  = gsub(
-            ".?([0-9]{1,})-([0-9]{1,}).?",
+            ".*([0-9]{1,})-([0-9]{1,}).*",
             "\\1_\\2",
             ID
             ),
@@ -154,10 +156,10 @@ make_date_data.v2 <- function(
           ),
       by=c("ID", "Title", "var.3")
     ) %>%
-    arrange(Due_date.2)
+    arrange(Rec_Unit.2)
 
   readr::write_excel_csv(
-    output,
+    output,na = ".",
     file = sprintf(
       "%s/%s",
       dir.output,

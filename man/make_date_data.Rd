@@ -4,8 +4,15 @@
 \alias{make_date_data}
 \title{Make tidy data}
 \usage{
-make_date_data(dir.data, fn.data, fn.record, dir.output, fn.output,
-  n_of_feedback = 12, .guess_max = 200)
+make_date_data(
+  dir.data,
+  fn.data,
+  fn.record,
+  dir.output,
+  fn.output,
+  n_of_feedback = 12,
+  .guess_max = 200
+)
 }
 \arguments{
 \item{dir.data}{Character}

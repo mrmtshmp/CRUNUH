@@ -18,7 +18,7 @@
 #'
 #' @export
 
-make_date_data <- function(
+make_date_data.v2 <- function(
   dir.data, fn.data, fn.record,
   dir.output, fn.output,
   n_of_feedback = 12,

@@ -26,11 +26,13 @@ make_date_data.v2 <- function(
   ){
 
 # dir.data   <- "./testdata"
-# fn.data    <- "data_210913.xlsx"
-# fn.record  <- "Report_210910.xlsx"
+# fn.data    <- "test_211007.xlsx"
+# fn.record  <- "Report_211006.xlsx"
 # dir.output <- "./testdata"
-# fn.output  <- "output_210910.csv"
-# test<- CRUNUH::make_date_data(
+# fn.output  <- "output_test_211007.csv"
+# n_of_feedback <- 13
+# .guess_max<-200
+# test<- make_date_data.v2(
 #   dir.data,
 #   fn.data,
 #   fn.record=fn.record,
@@ -45,7 +47,8 @@ make_date_data.v2 <- function(
     col_names = TRUE,
     guess_max = .guess_max,
     col_types = "text"
-    )
+    ) %>%
+    data.frame()
 
   data_record <- read_excel(
     path = sprintf("%s/%s",dir.data,fn.record),
@@ -59,7 +62,8 @@ make_date_data.v2 <- function(
     dplyr::select(
       ID, Title, var.3,
       starts_with("Comment_")
-      )
+      ) %>%
+    data.frame()
 
   data_record <- data_record[
     # !duplicated(
@@ -95,7 +99,7 @@ make_date_data.v2 <- function(
       !is.na(val) # & !is.na(Rec_Somu)
     ) %>%
     mutate(
-      ID    = gsub(".*([0-9]{1,})-([0-9]{1,}).*", "\\1_\\2", ID),
+      ID    = gsub("^[^0-9]{0,}([0-9]{1,})-([0-9]{1,}).*", "\\1_\\2", ID),
       var.2 = gsub(".[0-9]{1,}","", var),
       var.3 = gsub("[^0-9]{1,}","", var)
       ) %>%
@@ -141,13 +145,13 @@ make_date_data.v2 <- function(
     dplyr::select(-flg) %>%
     left_join(df.commented) %>%
     left_join(
-      data_record %>%
+      data_record[!duplicated(data_record),] %>%
         dplyr::select(
           ID, Title, var.3, starts_with("Comment_")
           )%>%
         mutate(
           ID  = gsub(
-            ".*([0-9]{1,})-([0-9]{1,}).*",
+            "[^0-9]{0,}([0-9]{1,})-([0-9]{1,}).*",
             "\\1_\\2",
             ID
             ),
@@ -157,6 +161,30 @@ make_date_data.v2 <- function(
       by=c("ID", "Title", "var.3")
     ) %>%
     arrange(Rec_Unit.2)
+
+  output <-
+    output[
+      !duplicated(
+        output[,
+          c("ID","Title","var.3")
+          ]
+        ),
+      ]
+
+  output.test <-
+    structure(
+      output,
+      class="data.frame",
+      .typeOf=c(
+        "character","character","character",
+        "character","numeric","Date",
+        "Date","Date","Date",
+        "Date","Date","character",
+        "Date","character","character",
+        "character"
+        )
+      )
+
 
   readr::write_excel_csv(
     output,na = ".",

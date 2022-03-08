@@ -55,7 +55,7 @@ make_date_data.v2 <- function(
     sheet= 1,
     skip = 0,
     na = ".",
-    col_types = c("numeric","text","text","text","date","numeric","date","date","date","date","date","date","text","date","text","text","text"),
+    col_types = c("text","text","text","date","numeric","date","date","date","date","date","date","text","date","text","text","text"),
     col_names = TRUE,
     guess_max = .guess_max
     ) %>%
